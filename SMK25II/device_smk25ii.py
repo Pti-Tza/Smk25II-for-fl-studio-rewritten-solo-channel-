@@ -10,6 +10,7 @@ sender = Sender()
 globalView = GlobalView()
 
 def OnInit():
+    print('sssss')
     handler.channel_mode_backlit_start_up()
     handler.globe_backlit()
     if handler.is_device_connected():

@@ -2,8 +2,13 @@ from smkconstant import *
 import channels
 import ui
 
+class Vars():
 
+   remembered_channels_mute = []
+   is_solo = 0
 def _init_channel_mode_actions(instance):
+   # self.is_solo = 0
+    #self.remembered_channels_mute = []
     for i, pad in enumerate(GRIDBIT_TOGGLE_PADS[:8]):
         if instance.mode == instance.MODE_CHANNEL:
             def create_channel_action(index=None, pad_value=None):
@@ -49,11 +54,29 @@ def _init_channel_mode_actions(instance):
         adjusted_index = get_adjusted_index()
         channels.muteChannel(adjusted_index, not channels.isChannelMuted(adjusted_index))
 
+
     instance.PAD_ACTIONS[(0x91, 0x24)] = mute_selected_channel
+
+
 
     def solo_selected_channel():
         adjusted_index = get_adjusted_index()
-        channels.soloChannel(adjusted_index, not channels.isChannelSolo(adjusted_index))
+        if not Vars.is_solo:
+            Vars.is_solo = 1
+            Vars.remembered_channels_mute.clear()
+
+            for i in range(0,channels.channelCount(1)):
+                Vars.remembered_channels_mute.append(channels.isChannelMuted(i))
+
+            for i in range(0,channels.channelCount(1)):
+                channels.muteChannel(i, 1)
+
+            channels.muteChannel(adjusted_index, 0)
+        else:
+            if len(Vars.remembered_channels_mute):
+                for i in range(0,channels.channelCount(1)):
+                    channels.muteChannel(i,Vars.remembered_channels_mute[i])
+            Vars.is_solo = 0
 
     instance.PAD_ACTIONS[(0x91, 0x2a)] = solo_selected_channel
 

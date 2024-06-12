@@ -8,6 +8,7 @@ import ui
 
 class GlobalView:
     def __init__(self):
+        print('ss')
         self.Sender = Sender
         self.play_button_state = False
         self.record_button_state = False
